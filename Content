@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+    <body>
+        <form method="post" action="home.php">
+            Url:<input type="text" name="uuu">
+            <br>
+            <br>
+            <input type="submit" name="submit" value="Add">
+            
+        </form>
+
+        <?php
+        // put your code here
+        $con=  mysql_connect("localhost", "root", "");
+     
+        if(isset($_POST['submit']))
+        {
+        $k=$_POST['uuu'];
+        echo "url is:". $k;
+        //ini_set('max_execution_time', 300);
+        $domain=parse_url($k,PHP_URL_HOST);
+        echo "<br> domain is:".$domain;
+           mysql_select_db("web_scraper");
+           $sel="select regex from url where domain='$domain'";
+           $res=  mysql_query($sel,$con);
+           $row=  mysql_fetch_array($res);
+           $regex=$row['regex'];
+           echo "<br>".$regex."<br>";
+           $html=  file_get_contents($k);
+           //echo $html;
+           preg_match_all($regex, $html, $title, PREG_SET_ORDER);
+           echo $title[0][0];
+        }    
+        ?>
+    </body>
+</html>
+
+
+OUTPUT
+
+Url :http://www.amazon.ca/gp/product/B00SGS7ZH4/ref=s9_acss_bw_hsb_LaptopsS_s2_n?pf_rd_m=A3DWYIK6Y9EEQB&pf_rd_s=merchandised-search-2&pf_rd_r=1S72BA42K5E9DADAAC62&pf_rd_t=101&pf_rd_p=2253690442&pf_rd_i=677252011
+
+url is: http://www.amazon.ca/gp/product/B00SGS7ZH4/ref=s9_acss_bw_hsb_LaptopsS_s2_n?pf_rd_m=A3DWYIK6Y9EEQB&pf_rd_s=merchandised-search-2&pf_rd_r=1S72BA42K5E9DADAAC62&pf_rd_t=101&pf_rd_p=2253690442&pf_rd_i=677252011
+
+domain is:www.amazon.ca
+
+/<span id="priceblock_ourprice" class=".*?">(.*?)<\/span>/s
+
+Notice: Undefined offset: 0 in C:\xampp\htdocs\A-scraper\home.php on line 36
